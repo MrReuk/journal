@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Мои заказы</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Дай сосну</h1>
+    <p>Качественные пиломатериалы для вашего дома</p>
+  </div>
+</header>
+
+<nav>
+  <div class="navbar">
+    <ul>
+      <li><a href="/" class="home-passive">О нас</a></li>
+      <li><a href="/user/orders" class="home-active">Мои заказы</a></li>
+      <li><a href="/user/order" class="home-passive">Заказать</a></li>
+      <li>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <button type="submit" class="logout-btn">Выйти</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Мои заказы</h1>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID заказа</th>
+      <th>Статус</th>
+      <th>Тип оплаты</th>
+      <th>Сумма</th>
+      <th>Пиломатериал</th>
+      <th>Ответственный</th>
+    </tr>
+    <tr th:each="order : ${orders}">
+      <td th:text="${order.id}"></td>
+      <td>
+        <span th:if="${order.employee != null}" class="status-approved">Одобрен</span>
+        <span th:if="${order.employee == null}" class="status-pending">На рассмотрении</span>
+      </td>
+      <td th:text="${order.pay.typePay.name}"></td>
+      <td th:text="${#numbers.formatDecimal(order.pay.price, 1, 2)} + ' руб.'"></td>
+      <td th:text="${order.lumber != null} ?
+                    (${order.lumber.typeOfLumber.name} + ' (' + ${order.lumber.treeSpecies.name} + ') - ' + ${#numbers.formatDecimal(order.lumber.volume, 1, 2)} + ' м³') :
+                    'Не указан'"></td>
+      <td th:text="${order.employee != null} ? ${order.employee.fullName} : 'Не назначен'"></td>
+    </tr>
+    <tr th:if="${orders.isEmpty()}">
+      <td colspan="6" style="text-align: center;">У вас пока нет заказов</td>
+    </tr>
+  </table>
+
+  <div class="action-buttons">
+    <a href="/user/order" class="btn btn-primary">Сделать новый заказ</a>
+    <a href="/" class="btn btn-secondary">На главную</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <h6>ООО Дай сосну. Все права защищены.</h6>
+  </div>
+</footer>
+</body>
+</html>

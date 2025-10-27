@@ -1,0 +1,12 @@
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+COPY target/journal-0.0.1-SNAPSHOT.jar app.jar
+
+RUN groupadd -r spring && useradd -r -g spring spring
+USER spring
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

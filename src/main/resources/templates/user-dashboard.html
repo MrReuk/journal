@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Панель пользователя</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Панель пользователя</h1>
+
+  <div class="user-info">
+    <p>Добро пожаловать! Здесь будет форма для создания заказа.</p>
+    <p>Функционал находится в разработке.</p>
+  </div>
+
+  <form th:action="@{/logout}" method="post" class="logout-form">
+    <button type="submit" class="btn btn-delete">Выйти</button>
+  </form>
+</div>
+</body>
+</html>

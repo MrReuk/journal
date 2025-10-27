@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск пользователей</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Поиск пользователей</h1>
+
+  <a th:href="@{/admin/users}"><button type="submit" class="btn btn-primary">Вернуться к списку</button></a>
+
+  <div class="form-container">
+    <form th:action="@{/admin/users/search}" method="get">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="Поиск по ID" th:value="${searchId}">
+        <input type="text" name="surname" class="form-control" placeholder="Фамилия" th:value="${searchSurname}">
+        <select name="roleId" class="form-control">
+          <option value="">Все роли</option>
+          <option th:each="role : ${allRoles}"
+                  th:value="${role.id}"
+                  th:text="${role.name}"
+                  th:selected="${searchRoleId == role.id}"></option>
+        </select>
+        <button type="submit" class="btn btn-primary">Искать</button>
+      </div>
+    </form>
+  </div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Фамилия</th>
+      <th>Имя</th>
+      <th>Отчество</th>
+      <th>Роль</th>
+      <th>Логин</th>
+    </tr>
+    <tr th:each="user : ${users}">
+      <td th:text="${user.id}"></td>
+      <td th:text="${user.surname}"></td>
+      <td th:text="${user.name}"></td>
+      <td th:text="${user.middleName != null} ? ${user.middleName} : ''"></td>
+      <td th:text="${user.role != null} ? ${user.role.name} : 'Нет роли'"></td>
+      <td th:text="${user.login}"></td>
+    </tr>
+    <tr th:if="${users.isEmpty()}">
+      <td colspan="6" style="text-align: center;">Пользователи не найдены</td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/users/search(id=${searchId},surname=${searchSurname},roleId=${searchRoleId},page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/users/search(id=${searchId},surname=${searchSurname},roleId=${searchRoleId},page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>

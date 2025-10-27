@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Дай сосну</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Дай сосну</h1>
+    <p>Качественные пиломатериалы для вашего дома</p>
+  </div>
+</header>
+
+<nav>
+  <div class="navbar">
+    <ul>
+      <li><a href="/" class="home-active">О нас</a></li>
+      <li sec:authorize="isAuthenticated() and hasAuthority('USER')">
+        <a href="/user/orders" class="home-passive">Мои заказы</a>
+      </li>
+      <li sec:authorize="isAuthenticated() and hasAuthority('USER')">
+        <a href="/user/order" class="home-passive">Заказать</a>
+      </li>
+      <li sec:authorize="isAuthenticated() and hasAuthority('ADMIN')">
+        <a href="/admin/dashboard" class="home-passive">Панель администратора</a>
+      </li>
+      <li sec:authorize="!isAuthenticated()">
+        <a href="/login" class="home-passive">Вход</a>
+      </li>
+      <li sec:authorize="!isAuthenticated()">
+        <a href="/register" class="home-passive">Регистрация</a>
+      </li>
+      <li sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <button type="submit" class="logout-btn">Выйти</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<section>
+  <div class="container">
+    <h2>О нас</h2>
+    <p>Компания "Дай сосну" занимается продажей пиломатериалов уже более 10 лет. Мы предлагаем только качественную продукцию, которая соответствует всем стандартам и нормам. Наши клиенты — это строительные компании, частные застройщики и дизайнеры интерьеров.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Наша продукция</h2>
+    <div class="product-list">
+      <div class="product-item">
+        <img src="/images/4_a2EPuzr.png" alt="Доска обрезная" onerror="this.style.display='none'">
+        <h3>Доска обрезная</h3>
+      </div>
+      <div class="product-item">
+        <img src="/images/L_height.webp" alt="Брус" onerror="this.style.display='none'">
+        <h3>Брус</h3>
+      </div>
+      <div class="product-item">
+        <img src="/images/evrovagonka_2.jpg" alt="Вагонка" onerror="this.style.display='none'">
+        <h3>Вагонка</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Наши преимущества</h2>
+    <div class="advantages">
+      <div class="column">
+        <h4>Высокое качество продукции</h4>
+      </div>
+      <div class="column">
+        <h4>Доступные цены</h4>
+      </div>
+      <div class="column">
+        <h4>Быстрая доставка</h4>
+      </div>
+      <div class="column">
+        <h4>Индивидуальный подход к каждому клиенту</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <h6>ООО Дай сосну. Все права защищены.</h6>
+  </div>
+</footer>
+</body>
+</html>

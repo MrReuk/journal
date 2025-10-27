@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск типов пиломатериалов</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Поиск типов пиломатериалов</h1>
+
+  <a th:href="@{/admin/types-of-lumber}"><button type="submit" class="btn btn-primary">Вернуться к списку</button></a>
+
+  <div class="form-container">
+    <form th:action="@{/admin/types-of-lumber/search}" method="get">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="Поиск по ID" th:value="${searchId}">
+        <input type="text" name="name" class="form-control" placeholder="Название типа" th:value="${searchName}">
+        <input type="text" name="area" class="form-control" placeholder="Область применения" th:value="${searchArea}">
+        <button type="submit" class="btn btn-primary">Искать</button>
+      </div>
+    </form>
+  </div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Название</th>
+      <th>Область применения</th>
+    </tr>
+    <tr th:each="item : ${typesOfLumber}">
+      <td th:text="${item.id}"></td>
+      <td th:text="${item.name}"></td>
+      <td th:text="${item.areaOfSpeciesion}"></td>
+    </tr>
+    <tr th:if="${typesOfLumber.isEmpty()}">
+      <td colspan="3" style="text-align: center;">Типы пиломатериалов не найдены</td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/types-of-lumber/search(id=${searchId},name=${searchName},area=${searchArea},page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/types-of-lumber/search(id=${searchId},name=${searchName},area=${searchArea},page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>

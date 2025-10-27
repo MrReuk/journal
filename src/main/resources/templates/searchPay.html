@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск платежей</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Поиск платежей</h1>
+
+  <a th:href="@{/admin/pay}"><button type="submit" class="btn btn-primary">Вернуться к списку</button></a>
+
+  <div class="form-container">
+    <form th:action="@{/admin/pay/search}" method="get">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="Поиск по ID" th:value="${searchId}">
+        <select name="typePayId" class="form-control">
+          <option value="">Все типы оплаты</option>
+          <option th:each="typePay : ${allTypePays}"
+                  th:value="${typePay.id}"
+                  th:text="${typePay.name}"
+                  th:selected="${searchTypePayId == typePay.id}"></option>
+        </select>
+        <select name="buyerId" class="form-control">
+          <option value="">Все покупатели</option>
+          <option th:each="buyer : ${allBuyers}"
+                  th:value="${buyer.id}"
+                  th:text="${buyer.fullName}"
+                  th:selected="${searchBuyerId == buyer.id}"></option>
+        </select>
+        <input type="number" name="priceMin" step="0.01" class="form-control"
+               placeholder="Цена от" th:value="${searchPriceMin}">
+        <input type="number" name="priceMax" step="0.01" class="form-control"
+               placeholder="Цена до" th:value="${searchPriceMax}">
+        <button type="submit" class="btn btn-primary">Искать</button>
+      </div>
+    </form>
+  </div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Тип оплаты</th>
+      <th>Покупатель</th>
+      <th>Цена</th>
+    </tr>
+    <tr th:each="pay : ${pays}">
+      <td th:text="${pay.id}"></td>
+      <td th:text="${pay.typePay.name}"></td>
+      <td th:text="${pay.buyer.fullName}"></td>
+      <td th:text="${#numbers.formatDecimal(pay.price, 1, 2)}"> руб.</td>
+    </tr>
+    <tr th:if="${pays.isEmpty()}">
+      <td colspan="4" style="text-align: center;">Платежи не найдены</td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/pay/search(id=${searchId},typePayId=${searchTypePayId},buyerId=${searchBuyerId},priceMin=${searchPriceMin},priceMax=${searchPriceMax},page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/pay/search(id=${searchId},typePayId=${searchTypePayId},buyerId=${searchBuyerId},priceMin=${searchPriceMin},priceMax=${searchPriceMax},page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>

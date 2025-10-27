@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск типов оплаты</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Поиск типов оплаты</h1>
+
+  <a th:href="@{/admin/type-pay}"><button type="submit" class="btn btn-primary">Вернуться к списку</button></a>
+
+  <div class="form-container">
+    <form th:action="@{/admin/type-pay/search}" method="get">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="Поиск по ID" th:value="${searchId}">
+        <input type="text" name="name" class="form-control" placeholder="Название типа оплаты" th:value="${searchName}">
+        <button type="submit" class="btn btn-primary">Искать</button>
+      </div>
+    </form>
+  </div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Название типа оплаты</th>
+    </tr>
+    <tr th:each="type : ${typesPay}">
+      <td th:text="${type.id}"></td>
+      <td th:text="${type.name}"></td>
+    </tr>
+    <tr th:if="${typesPay.isEmpty()}">
+      <td colspan="2" style="text-align: center;">Типы оплаты не найдены</td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/type-pay/search(id=${searchId},name=${searchName},page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/type-pay/search(id=${searchId},name=${searchName},page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>

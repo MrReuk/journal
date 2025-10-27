@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск пиломатериалов</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Поиск пиломатериалов</h1>
+
+  <a th:href="@{/admin/lumber}"><button type="submit" class="btn btn-primary">Вернуться к списку</button></a>
+
+  <div class="form-container">
+    <form th:action="@{/admin/lumber/search}" method="get">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="Поиск по ID" th:value="${searchId}">
+        <select name="typeId" class="form-control">
+          <option value="">Все типы</option>
+          <option th:each="type : ${allTypes}"
+                  th:value="${type.id}"
+                  th:text="${type.name}"
+                  th:selected="${searchTypeId == type.id}"></option>
+        </select>
+        <select name="speciesId" class="form-control">
+          <option value="">Все виды</option>
+          <option th:each="species : ${allSpecies}"
+                  th:value="${species.id}"
+                  th:text="${species.name}"
+                  th:selected="${searchSpeciesId == species.id}"></option>
+        </select>
+        <input type="number" name="volumeMin" class="form-control"
+               step="0.01" min="0" placeholder="Объем от" th:value="${searchVolumeMin}">
+        <input type="number" name="volumeMax" class="form-control"
+               step="0.01" min="0" placeholder="Объем до" th:value="${searchVolumeMax}">
+        <button type="submit" class="btn btn-primary">Искать</button>
+      </div>
+    </form>
+  </div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Тип пиломатериала</th>
+      <th>Вид дерева</th>
+      <th>Объем (м³)</th>
+    </tr>
+    <tr th:each="item : ${lumberList}">
+      <td><a th:href="@{/admin/lumber/details/{id}(id=${item.id})}" th:text="${item.id}"></a></td>
+      <td th:text="${item.typeOfLumber.name}"></td>
+      <td th:text="${item.treeSpecies.name}"></td>
+      <td th:text="${#numbers.formatDecimal(item.volume, 1, 2)}"></td>
+    </tr>
+    <tr th:if="${lumberList.isEmpty()}">
+      <td colspan="4" style="text-align: center;">Пиломатериалы не найдены</td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/lumber/search(id=${searchId},typeId=${searchTypeId},speciesId=${searchSpeciesId},volumeMin=${searchVolumeMin},volumeMax=${searchVolumeMax},page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/lumber/search(id=${searchId},typeId=${searchTypeId},speciesId=${searchSpeciesId},volumeMin=${searchVolumeMin},volumeMax=${searchVolumeMax},page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Типы пиломатериалов</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Управление типами пиломатериалов</h1>
+
+  <a th:href="@{/admin/types-of-lumber/search}"><button type="submit" class="btn btn-primary">Перейти к поиску</button></a>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Название</th>
+      <th>Область применения</th>
+    </tr>
+    <tr th:each="item : ${typesOfLumber}">
+      <td th:text="${item.id}"></td>
+      <td th:text="${item.name}"></td>
+      <td th:text="${item.areaOfSpeciesion}"></td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/types-of-lumber(page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/types-of-lumber(page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+
+  <div class="form-container">
+    <h3>Добавить тип пиломатериала</h3>
+    <form th:action="@{/admin/types-of-lumber/add}" th:object="${typeOfLumber}" method="post">
+      <div class="form-row">
+        <input type="text" th:field="*{name}" class="form-control" placeholder="Название типа" required maxlength="30">
+        <input type="text" th:field="*{areaOfSpeciesion}" class="form-control" placeholder="Область применения" required maxlength="80">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+      <div class="form-row">
+        <small class="alert-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+        <small class="alert-error" th:if="${#fields.hasErrors('areaOfSpeciesion')}" th:errors="*{areaOfSpeciesion}"></small>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <h3>Обновить тип пиломатериала</h3>
+    <form th:action="@{/admin/types-of-lumber/update}" method="post">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="ID типа" required>
+        <input type="text" name="name" class="form-control" placeholder="Название" required maxlength="30">
+        <input type="text" name="areaOfSpeciesion" class="form-control" placeholder="Область применения" required maxlength="80">
+        <button type="submit" class="btn btn-update">Обновить</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <h3>Удалить тип пиломатериала</h3>
+    <form th:action="@{/admin/types-of-lumber/delete}" method="post">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="ID типа" required>
+        <button type="submit" class="btn btn-delete">Удалить</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

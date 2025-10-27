@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Панель администратора</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Панель администратора</h1>
+
+  <div class="dashboard-menu">
+    <h3 class="dashboard-title">Управление системой</h3>
+    <div class="menu-grid">
+      <a th:href="@{/admin/users}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление пользователями</button>
+      </a>
+      <a th:href="@{/admin/roles}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление ролями</button>
+      </a>
+      <a th:href="@{/admin/lumber}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление пиломатериалами</button>
+      </a>
+      <a th:href="@{/admin/tree-species}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление видами деревьев</button>
+      </a>
+      <a th:href="@{/admin/types-of-lumber}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление типами пиломатериалов</button>
+      </a>
+      <a th:href="@{/admin/type-pay}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление типами оплаты</button>
+      </a>
+      <a th:href="@{/admin/pay}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление платежами</button>
+      </a>
+      <a th:href="@{/admin/sales}" class="menu-item">
+        <button type="button" class="btn btn-primary">Управление продажами</button>
+      </a>
+    </div>
+  </div>
+
+  <form th:action="@{/logout}" method="post" class="logout-form">
+    <button type="submit" class="btn btn-delete">Выйти из системы</button>
+  </form>
+</div>
+</body>
+</html>

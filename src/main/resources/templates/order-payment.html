@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Оплата заказа</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Дай сосну</h1>
+    <p>Качественные пиломатериалы для вашего дома</p>
+  </div>
+</header>
+
+<nav>
+  <div class="navbar">
+    <ul>
+      <li><a href="/" class="home-passive">О нас</a></li>
+      <li><a href="/user/orders" class="home-passive">Мои заказы</a></li>
+      <li><a href="/user/order" class="home-active">Заказать</a></li>
+      <li>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <button type="submit" class="logout-btn">Выйти</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Оплата заказа</h1>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <div class="form-container">
+    <h3>Шаг 2: Оплата</h3>
+
+    <div th:if="${savedLumber}" class="order-summary">
+      <h4>Детали заказа:</h4>
+      <p><strong>Тип пиломатериала:</strong>
+        <span th:text="${savedLumber.typeOfLumber?.name ?: 'Не указан'}"></span></p>
+      <p><strong>Вид дерева:</strong>
+        <span th:text="${savedLumber.treeSpecies?.name ?: 'Не указан'}"></span></p>
+      <p><strong>Объем:</strong>
+        <span th:text="${savedLumber.volume != null ? #numbers.formatDecimal(savedLumber.volume, 1, 2) : 'Не указан'}"></span> м³</p>
+    </div>
+
+    <form th:action="@{/user/order/payment}" th:object="${pay}" method="post">
+      <div class="form-row">
+        <select th:field="*{typePay}" class="form-control" required>
+          <option value="">Выберите способ оплаты</option>
+          <option th:each="typePay : ${typePays}"
+                  th:value="${typePay.id}"
+                  th:text="${typePay.name}"></option>
+        </select>
+      </div>
+      <div class="form-row">
+        <input type="number" th:field="*{price}" class="form-control"
+               step="0.01" min="0.01" placeholder="Сумма оплаты" required>
+      </div>
+      <div class="form-row">
+        <button type="submit" class="btn btn-primary">Оплатить</button>
+        <a href="/user/order" class="btn btn-secondary">Назад к выбору пиломатериалов</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <h6>ООО Дай сосну. Все права защищены.</h6>
+  </div>
+</footer>
+</body>
+</html>

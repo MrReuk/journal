@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Управление пиломатериалами</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Управление пиломатериалами</h1>
+
+    <a th:href="@{/admin/lumber/search}"><button type="submit" class="btn btn-primary">Перейти к поиску</button></a>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <table class="data-table">
+        <tr>
+            <th>ID</th>
+            <th>Тип пиломатериала</th>
+            <th>Вид дерева</th>
+            <th>Объем (м³)</th>
+        </tr>
+        <tr th:each="item : ${lumberList}">
+            <td th:text="${item.id}"></td>
+            <td th:text="${item.typeOfLumber.name}"></td>
+            <td th:text="${item.treeSpecies.name}"></td>
+            <td th:text="${#numbers.formatDecimal(item.volume, 1, 2)}"></td>
+        </tr>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:href="@{/admin/lumber(page=${currentPage > 0 ? currentPage - 1 : 0})}"
+           th:if="${currentPage > 0}">Предыдущая</a>
+        <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+        <a th:href="@{/admin/lumber(page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+           th:if="${currentPage < totalPages - 1}">Следующая</a>
+    </div>
+
+    <div class="form-container">
+        <h3>Добавить пиломатериал</h3>
+        <form th:action="@{/admin/lumber/add}" th:object="${lumber}" method="post">
+            <div class="form-row">
+                <select th:field="*{typeOfLumber}" class="form-control" required>
+                    <option value="">Выберите тип пиломатериала</option>
+                    <option th:each="type : ${allTypes}"
+                            th:value="${type.id}"
+                            th:text="${type.name}"></option>
+                </select>
+                <select th:field="*{treeSpecies}" class="form-control" required>
+                    <option value="">Выберите вид дерева</option>
+                    <option th:each="species : ${allSpecies}"
+                            th:value="${species.id}"
+                            th:text="${species.name}"></option>
+                </select>
+                <input type="number" th:field="*{volume}" class="form-control"
+                       step="0.01" min="0.01" placeholder="Объем" required>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </div>
+            <div class="form-row">
+                <small class="alert-error" th:if="${#fields.hasErrors('typeOfLumber')}">Выберите тип пиломатериала</small>
+                <small class="alert-error" th:if="${#fields.hasErrors('treeSpecies')}">Выберите вид дерева</small>
+                <small class="alert-error" th:if="${#fields.hasErrors('volume')}" th:errors="*{volume}"></small>
+            </div>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h3>Обновить пиломатериал</h3>
+        <form th:action="@{/admin/lumber/update}" method="post">
+            <div class="form-row">
+                <input type="number" name="id" class="form-control" placeholder="ID пиломатериала" required>
+                <select name="typeId" class="form-control" required>
+                    <option value="">Выберите тип пиломатериала</option>
+                    <option th:each="type : ${allTypes}"
+                            th:value="${type.id}"
+                            th:text="${type.name}"></option>
+                </select>
+                <select name="speciesId" class="form-control" required>
+                    <option value="">Выберите вид дерева</option>
+                    <option th:each="species : ${allSpecies}"
+                            th:value="${species.id}"
+                            th:text="${species.name}"></option>
+                </select>
+                <input type="number" name="volume" class="form-control"
+                       step="0.01" min="0.01" placeholder="Объем" required>
+                <button type="submit" class="btn btn-update">Обновить</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h3>Удалить пиломатериал</h3>
+        <form th:action="@{/admin/lumber/delete}" method="post">
+            <div class="form-row">
+                <input type="number" name="id" class="form-control" placeholder="ID пиломатериала" required>
+                <button type="submit" class="btn btn-delete">Удалить</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

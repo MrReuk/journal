@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск продаж</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Поиск продаж</h1>
+
+  <a th:href="@{/admin/sales}"><button type="submit" class="btn btn-primary">Вернуться к списку</button></a>
+
+  <div class="form-container">
+    <form th:action="@{/admin/sales/search}" method="get">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="Поиск по ID" th:value="${searchId}">
+        <select name="employeeId" class="form-control">
+          <option value="">Все сотрудники</option>
+          <option th:each="employee : ${allEmployees}"
+                  th:value="${employee.id}"
+                  th:text="${employee.fullName}"
+                  th:selected="${searchEmployeeId == employee.id}"></option>
+        </select>
+        <select name="buyerId" class="form-control">
+          <option value="">Все покупатели</option>
+          <option th:each="buyer : ${allBuyers}"
+                  th:value="${buyer.id}"
+                  th:text="${buyer.fullName}"
+                  th:selected="${searchBuyerId == buyer.id}"></option>
+        </select>
+        <select name="payId" class="form-control">
+          <option value="">Все платежи</option>
+          <option th:each="pay : ${allPays}"
+                  th:value="${pay.id}"
+                  th:text="${pay.typePay.name} + ' - ' + ${pay.buyer.fullName}"
+                  th:selected="${searchPayId == pay.id}"></option>
+        </select>
+        <select name="lumberId" class="form-control">
+          <option value="">Все пиломатериалы</option>
+          <option th:each="lumber : ${allLumbers}"
+                  th:value="${lumber.id}"
+                  th:text="${lumber.typeOfLumber.name} + ' (' + ${lumber.treeSpecies.name} + ')'"
+                  th:selected="${searchLumberId == lumber.id}"></option>
+        </select>
+        <button type="submit" class="btn btn-primary">Искать</button>
+      </div>
+    </form>
+  </div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Сотрудник</th>
+      <th>Покупатель</th>
+      <th>Тип оплаты</th>
+      <th>Сумма</th>
+      <th>Пиломатериал</th>
+    </tr>
+    <tr th:each="sale : ${salesList}">
+      <td th:text="${sale.id}"></td>
+      <td th:text="${sale.employee.fullName}"></td>
+      <td th:text="${sale.buyer.fullName}"></td>
+      <td th:text="${sale.pay.typePay.name}"></td>
+      <td th:text="${#numbers.formatDecimal(sale.pay.price, 1, 2)} + ' руб.'"></td>
+      <td th:text="${sale.lumber != null} ?
+          (${sale.lumber.typeOfLumber.name} + ' (' + ${sale.lumber.treeSpecies.name} + ')') :
+          'Не указан'"></td>
+    </tr>
+    <tr th:if="${salesList.isEmpty()}">
+      <td colspan="6" style="text-align: center;">Продажи не найдены</td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/sales/search(id=${searchId},employeeId=${searchEmployeeId},buyerId=${searchBuyerId},payId=${searchPayId},lumberId=${searchLumberId},page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/sales/search(id=${searchId},employeeId=${searchEmployeeId},buyerId=${searchBuyerId},payId=${searchPayId},lumberId=${searchLumberId},page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>

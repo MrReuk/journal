@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Продажи</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Управление продажами</h1>
+
+  <a th:href="@{/admin/sales/search}"><button type="submit" class="btn btn-primary">Перейти к поиску</button></a>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Сотрудник</th>
+      <th>Покупатель</th>
+      <th>Тип оплаты</th>
+      <th>Сумма</th>
+      <th>Пиломатериал</th>
+    </tr>
+    <tr th:each="sale : ${salesList}">
+      <td th:text="${sale.id}"></td>
+      <td th:text="${sale.employee.fullName}"></td>
+      <td th:text="${sale.buyer.fullName}"></td>
+      <td th:text="${sale.pay.typePay.name}"></td>
+      <td th:text="${#numbers.formatDecimal(sale.pay.price, 1, 2)} + ' руб.'"></td>
+      <td th:text="${sale.lumber != null} ?
+          (${sale.lumber.typeOfLumber.name} + ' (' + ${sale.lumber.treeSpecies.name} + ')') :
+          'Не указан'"></td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/sales(page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/sales(page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+
+  <div class="form-container">
+    <h3>Добавить продажу</h3>
+    <form th:action="@{/admin/sales/add}" th:object="${sale}" method="post">
+      <div class="form-row">
+        <select th:field="*{employee}" class="form-control" required>
+          <option value="">Выберите сотрудника</option>
+          <option th:each="employee : ${allEmployees}"
+                  th:value="${employee.id}"
+                  th:text="${employee.fullName}"></option>
+        </select>
+        <select th:field="*{buyer}" class="form-control" required>
+          <option value="">Выберите покупателя</option>
+          <option th:each="buyer : ${allBuyers}"
+                  th:value="${buyer.id}"
+                  th:text="${buyer.fullName}"></option>
+        </select>
+        <select th:field="*{pay}" class="form-control" required>
+          <option value="">Выберите платеж</option>
+          <option th:each="pay : ${allPays}"
+                  th:value="${pay.id}"
+                  th:text="${pay.typePay.name} + ' - ' + ${pay.buyer.fullName} + ' (' + ${#numbers.formatDecimal(pay.price, 1, 2)} + ' руб.)'"></option>
+        </select>
+        <select th:field="*{lumber}" class="form-control">
+          <option value="">Выберите пиломатериал (необязательно)</option>
+          <option th:each="lumber : ${allLumbers}"
+                  th:value="${lumber.id}"
+                  th:text="${lumber.typeOfLumber.name} + ' (' + ${lumber.treeSpecies.name} + ') - ' + ${#numbers.formatDecimal(lumber.volume, 1, 2)} + ' м³'"></option>
+        </select>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+      <div class="form-row">
+        <small class="alert-error" th:if="${#fields.hasErrors('employee')}">Выберите сотрудника</small>
+        <small class="alert-error" th:if="${#fields.hasErrors('buyer')}">Выберите покупателя</small>
+        <small class="alert-error" th:if="${#fields.hasErrors('pay')}">Выберите платеж</small>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <h3>Обновить продажу</h3>
+    <form th:action="@{/admin/sales/update}" method="post">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="ID продажи" required>
+        <select name="employeeId" class="form-control" required>
+          <option value="">Выберите сотрудника</option>
+          <option th:each="employee : ${allEmployees}"
+                  th:value="${employee.id}"
+                  th:text="${employee.fullName}"></option>
+        </select>
+        <select name="buyerId" class="form-control" required>
+          <option value="">Выберите покупателя</option>
+          <option th:each="buyer : ${allBuyers}"
+                  th:value="${buyer.id}"
+                  th:text="${buyer.fullName}"></option>
+        </select>
+        <select name="payId" class="form-control" required>
+          <option value="">Выберите платеж</option>
+          <option th:each="pay : ${allPays}"
+                  th:value="${pay.id}"
+                  th:text="${pay.typePay.name} + ' - ' + ${pay.buyer.fullName} + ' (' + ${#numbers.formatDecimal(pay.price, 1, 2)} + ' руб.)'"></option>
+        </select>
+        <select name="lumberId" class="form-control">
+          <option value="">Без пиломатериала</option>
+          <option th:each="lumber : ${allLumbers}"
+                  th:value="${lumber.id}"
+                  th:text="${lumber.typeOfLumber.name} + ' (' + ${lumber.treeSpecies.name} + ')'"></option>
+        </select>
+        <button type="submit" class="btn btn-update">Обновить</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <h3>Удалить продажу</h3>
+    <form th:action="@{/admin/sales/delete}" method="post">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="ID продажи" required>
+        <button type="submit" class="btn btn-delete">Удалить</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

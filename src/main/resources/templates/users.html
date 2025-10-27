@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Управление пользователями</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h1>Управление пользователями</h1>
+
+  <a th:href="@{/admin/users/search}"><button type="submit" class="btn btn-primary">Перейти к поиску</button></a>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <table class="data-table">
+    <tr>
+      <th>ID</th>
+      <th>Фамилия</th>
+      <th>Имя</th>
+      <th>Отчество</th>
+      <th>Роль</th>
+      <th>Логин</th>
+    </tr>
+    <tr th:each="user : ${users}">
+      <td th:text="${user.id}"></td>
+      <td th:text="${user.surname}"></td>
+      <td th:text="${user.name}"></td>
+      <td th:text="${user.middleName != null} ? ${user.middleName} : ''"></td>
+      <td th:text="${user.role != null} ? ${user.role.name} : 'Нет роли'"></td>
+      <td th:text="${user.login}"></td>
+    </tr>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}">
+    <a th:href="@{/admin/users(page=${currentPage > 0 ? currentPage - 1 : 0})}"
+       th:if="${currentPage > 0}">Предыдущая</a>
+    <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+    <a th:href="@{/admin/users(page=${currentPage < totalPages - 1 ? currentPage + 1 : currentPage})}"
+       th:if="${currentPage < totalPages - 1}">Следующая</a>
+  </div>
+
+  <div class="form-container">
+    <h3>Добавить пользователя</h3>
+    <form th:action="@{/admin/users/add}" th:object="${user}" method="post">
+      <div class="form-row">
+        <input type="text" th:field="*{surname}" class="form-control" placeholder="Фамилия" required maxlength="30">
+        <input type="text" th:field="*{name}" class="form-control" placeholder="Имя" required maxlength="30">
+        <input type="text" th:field="*{middleName}" class="form-control" placeholder="Отчество" maxlength="30">
+        <select th:field="*{role}" class="form-control">
+          <option value="">Выберите роль</option>
+          <option th:each="role : ${allRoles}"
+                  th:value="${role.id}"
+                  th:text="${role.name}"></option>
+        </select>
+        <input type="text" th:field="*{login}" class="form-control" placeholder="Логин" required maxlength="30">
+        <input type="password" th:field="*{password}" class="form-control" placeholder="Пароль" required maxlength="100">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+      <div class="form-row">
+        <small class="alert-error" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></small>
+        <small class="alert-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+        <small class="alert-error" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></small>
+        <small class="alert-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <h3>Обновить пользователя</h3>
+    <form th:action="@{/admin/users/update}" method="post">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="ID пользователя" required>
+        <input type="text" name="surname" class="form-control" placeholder="Фамилия" required maxlength="30">
+        <input type="text" name="name" class="form-control" placeholder="Имя" required maxlength="30">
+        <input type="text" name="middleName" class="form-control" placeholder="Отчество" maxlength="30">
+        <select name="roleId" class="form-control">
+          <option value="">Без роли</option>
+          <option th:each="role : ${allRoles}"
+                  th:value="${role.id}"
+                  th:text="${role.name}"></option>
+        </select>
+        <input type="text" name="login" class="form-control" placeholder="Логин" required maxlength="30">
+        <input type="password" name="password" class="form-control" placeholder="Пароль" required maxlength="100">
+        <button type="submit" class="btn btn-update">Обновить</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-container">
+    <h3>Удалить пользователя</h3>
+    <form th:action="@{/admin/users/delete}" method="post">
+      <div class="form-row">
+        <input type="number" name="id" class="form-control" placeholder="ID пользователя" required>
+        <button type="submit" class="btn btn-delete">Удалить</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

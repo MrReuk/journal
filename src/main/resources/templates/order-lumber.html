@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Заказать пиломатериалы</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <div>
+        <h1>Дай сосну</h1>
+        <p>Качественные пиломатериалы для вашего дома</p>
+    </div>
+</header>
+
+<nav>
+    <div class="navbar">
+        <ul>
+            <li><a href="/" class="home-passive">О нас</a></li>
+            <li><a href="/user/orders" class="home-passive">Мои заказы</a></li>
+            <li><a href="/user/order" class="home-active">Заказать</a></li>
+            <li>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="logout-btn">Выйти</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Заказать пиломатериалы</h1>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="form-container">
+        <h3>Шаг 1: Выбор пиломатериалов</h3>
+        <form th:action="@{/user/order}" th:object="${lumber}" method="post">
+            <div class="form-row">
+                <select th:field="*{typeOfLumber}" class="form-control" required>
+                    <option value="">Выберите тип пиломатериала</option>
+                    <option th:each="type : ${allTypes}"
+                            th:value="${type.id}"
+                            th:text="${type.name}"></option>
+                </select>
+            </div>
+            <div class="form-row">
+                <select th:field="*{treeSpecies}" class="form-control" required>
+                    <option value="">Выберите вид дерева</option>
+                    <option th:each="species : ${allSpecies}"
+                            th:value="${species.id}"
+                            th:text="${species.name}"></option>
+                </select>
+            </div>
+            <div class="form-row">
+                <input type="number" th:field="*{volume}" class="form-control"
+                       step="0.01" min="0.01" placeholder="Объем (м³)" required>
+            </div>
+            <div class="form-row">
+                <button type="submit" class="btn btn-primary">Перейти к оплате</button>
+                <a href="/user/orders" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <h6>ООО Дай сосну. Все права защищены.</h6>
+    </div>
+</footer>
+</body>
+</html>
